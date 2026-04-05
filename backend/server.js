@@ -15,10 +15,11 @@ connectDB();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://thefolio-jet.vercel.app/' 
+    'https://thefolio-jet.vercel.app' // <-- Your updated Vercel URL
   ],
   credentials: true,
 }));
+
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
