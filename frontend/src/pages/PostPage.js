@@ -45,7 +45,7 @@ function PostPage() {
           </p>
 
           {post.image && (
-            <img src={`http://localhost:5000/uploads/${post.image}`} alt={post.title} style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} />
+            <img src={`${process.env.REACT_APP_API_URL?.replace('/api', '')}/uploads/${post.image}`} alt={post.title} style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} />
           )}
 
           <p style={{ whiteSpace: 'pre-wrap', width: '100%' }}>{post.body}</p>
