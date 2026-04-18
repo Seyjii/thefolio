@@ -52,7 +52,7 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
     const user = await User.findById(req.user._id);
     if (req.body.name) user.name = req.body.name;
     if (req.body.bio) user.bio = req.body.bio;
-    if (req.file) user.profilePic = req.file.filename;
+    if (req.file) user.profilePic = req.file.path;
 
     await user.save();
     const updated = await User.findById(user._id).select('-password');

@@ -25,7 +25,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
   try {
     const { title, body } = req.body;
-    const image = req.file ? req.file.filename : '';
+    const image = req.file ? req.file.path : '';
     const post = await Post.create({ title, body, image, author: req.user._id });
     await post.populate('author', 'name profilePic');
     res.status(201).json(post);
@@ -43,7 +43,7 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
 
     if (req.body.title) post.title = req.body.title;
     if (req.body.body) post.body = req.body.body;
-    if (req.file) post.image = req.file.filename;
+    if (req.file) post.image = req.file.path;
 
     await post.save();
     res.json(post);
