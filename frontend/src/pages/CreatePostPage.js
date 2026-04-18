@@ -42,12 +42,11 @@ function CreatePostPage() {
           <label>Post Body:</label>
           <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Share your thoughts..." rows="8" required></textarea>
           
-          {user?.role === 'admin' && (
-            <div style={{marginBottom: '20px'}}>
-              <label>Upload Cover Image (Admin Only): </label>
-              <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} style={{border: 'none', background: 'transparent', padding: '10px 0'}} />
-            </div>
-          )}
+          {/* Admin restriction removed here */}
+          <div style={{marginBottom: '20px'}}>
+            <label>Upload Cover Image (Optional): </label>
+            <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} style={{border: 'none', background: 'transparent', padding: '10px 0'}} />
+          </div>
           
           <button type="submit" className="btn">Publish Post</button>
         </form>
