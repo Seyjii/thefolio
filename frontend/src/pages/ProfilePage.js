@@ -41,9 +41,9 @@ function ProfilePage() {
     }
   };
 
-  const picSrc = user?.profilePic 
-    ? `http://localhost:5000/uploads/${user.profilePic}` 
-    : '/assets/about1.jpg'; // Fallback to one of your phase 1 assets
+ const picSrc = user?.profilePic 
+  ? (user.profilePic.startsWith('http') ? user.profilePic : `${process.env.REACT_APP_API_URL?.replace('/api','')}/uploads/${user.profilePic}`) 
+  : '/assets/profile.jpg';
 
   return (
     <section className="contact-content">
