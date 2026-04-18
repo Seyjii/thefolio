@@ -76,8 +76,12 @@ function HomePage() {
                   
                   <div>
                     {post.image && (
-                      <img src={`${process.env.REACT_APP_API_URL?.replace('/api', '')}/uploads/${post.image}`} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '10px', marginBottom: '15px' }} />
-                    )}
+  <img 
+    src={post.image.startsWith('http') ? post.image : `${process.env.REACT_APP_API_URL?.replace('/api', '')}/uploads/${post.image}`} 
+    alt={post.title} 
+    style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '10px', marginBottom: '15px' }} 
+  />
+)}
                     <h3 style={{ marginBottom: '10px', color: 'var(--text-accent)' }}>{post.title}</h3>
                     <p style={{ marginBottom: '15px' }}>{post.body.substring(0, 100)}...</p>
                   </div>
