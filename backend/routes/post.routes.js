@@ -50,14 +50,14 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
+// DELETE a post (Admin ONLY)
 router.delete('/:id', protect, memberOrAdmin, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    const isOwner = post.author.toString() === req.user._id.toString();
     const isAdmin = req.user.role === 'admin';
-    if (!isOwner && !isAdmin) return res.status(403).json({ message: 'Not authorized' });
+    if (!isAdmin) return res.status(403).json({ message: 'Not authorized: Only admins can delete posts' });
 
     await post.deleteOne();
     res.json({ message: 'Post deleted successfully' });

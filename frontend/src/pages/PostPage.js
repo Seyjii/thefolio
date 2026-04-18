@@ -11,16 +11,14 @@ function PostPage() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // New state for comments
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [commentError, setCommentError] = useState('');
 
   useEffect(() => {
-    // Fetch both the post and its comments simultaneously
     Promise.all([
       API.get(`/posts/${id}`),
-      API.get(`/comments/${id}`) // Calling your existing comment route!
+      API.get(`/comments/${id}`) 
     ])
       .then(([postRes, commentsRes]) => {
         setPost(postRes.data);
@@ -36,34 +34,28 @@ function PostPage() {
         await API.delete(`/posts/${id}`);
         navigate('/home');
       } catch (err) {
-        alert("Failed to delete post");
+        alert("Failed to delete post. You might not have permission.");
       }
     }
   };
 
-  // Function to handle submitting a new comment
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     setCommentError('');
     
     try {
-      // Notice: Your backend uses req.body.body for the comment text!
       const res = await API.post(`/comments/${id}`, { body: newComment });
-      
-      // Add the new comment to the list so it appears instantly
       setComments([...comments, res.data]);
-      setNewComment(''); // Clear the input
+      setNewComment(''); 
     } catch (err) {
       setCommentError(err.response?.data?.message || 'Failed to post comment');
     }
   };
 
-  // Function to handle deleting a comment
   const handleDeleteComment = async (commentId) => {
     if (window.confirm("Delete this comment?")) {
       try {
         await API.delete(`/comments/${commentId}`);
-        // Remove it from the screen
         setComments(comments.filter(c => c._id !== commentId));
       } catch (err) {
         alert("Failed to delete comment");
@@ -74,13 +66,14 @@ function PostPage() {
   if (loading) return <div style={{textAlign: 'center', padding: '100px'}}>Loading...</div>;
   if (!post) return <div style={{textAlign: 'center', padding: '100px'}}>Post not found.</div>;
 
-  const isOwnerOrAdmin = user && (user._id === post.author?._id || user.role === 'admin');
+  // Split permissions: Author/Admin can Edit, ONLY Admin can Delete
+  const canEdit = user && (user._id === post.author?._id || user.role === 'admin');
+  const canDelete = user && user.role === 'admin';
 
   return (
     <section className="about-content">
       <div className="container">
         
-        {/* Post Content */}
         <div className="about-section" style={{ alignItems: 'flex-start', textAlign: 'left' }}>
           <h2 style={{ marginBottom: '10px', fontSize: '36px', textAlign: 'left' }}>{post.title}</h2>
           
@@ -98,21 +91,22 @@ function PostPage() {
 
           <p style={{ whiteSpace: 'pre-wrap', width: '100%' }}>{post.body}</p>
 
-          {isOwnerOrAdmin && (
-            <div style={{ marginTop: '30px', display: 'flex', gap: '15px' }}>
+          <div style={{ marginTop: '30px', display: 'flex', gap: '15px' }}>
+            {canEdit && (
               <Link to={`/edit-post/${post._id}`} className="btn">Edit Post</Link>
+            )}
+            {canDelete && (
               <button onClick={handleDelete} className="btn" style={{ background: '#ff4d4d' }}>Delete Post</button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <hr style={{ margin: '40px 0', border: '1px solid #eee' }} />
 
-        {/* --- COMMENT SECTION --- */}
+        {/* Comment Section */}
         <div className="comments-section" style={{ textAlign: 'left', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
           <h3 style={{ marginBottom: '20px' }}>Comments ({comments.length})</h3>
 
-          {/* Comment Input */}
           {user ? (
             <form onSubmit={handleCommentSubmit} style={{ marginBottom: '30px' }}>
               {commentError && <p style={{ color: 'red', marginBottom: '10px' }}>{commentError}</p>}
@@ -130,7 +124,6 @@ function PostPage() {
             <p style={{ marginBottom: '30px', fontStyle: 'italic' }}>Please log in to leave a comment.</p>
           )}
 
-          {/* Comment List */}
           <div className="comment-list">
             {comments.map((comment) => {
               const isCommentOwnerOrAdmin = user && (user._id === comment.author?._id || user.role === 'admin');
@@ -146,7 +139,6 @@ function PostPage() {
                   
                   <p style={{ margin: '0' }}>{comment.body}</p>
                   
-                  {/* Delete button for comment author or admin */}
                   {isCommentOwnerOrAdmin && (
                     <button 
                       onClick={() => handleDeleteComment(comment._id)} 
