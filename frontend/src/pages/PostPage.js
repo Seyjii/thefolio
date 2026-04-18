@@ -66,9 +66,8 @@ function PostPage() {
   if (loading) return <div style={{textAlign: 'center', padding: '100px'}}>Loading...</div>;
   if (!post) return <div style={{textAlign: 'center', padding: '100px'}}>Post not found.</div>;
 
-  // Split permissions: Author/Admin can Edit, ONLY Admin can Delete
-  const canEdit = user && (user._id === post.author?._id || user.role === 'admin');
-  const canDelete = user && user.role === 'admin';
+  // Brought this back to apply to BOTH Edit and Delete buttons
+  const isOwnerOrAdmin = user && (user._id === post.author?._id || user.role === 'admin');
 
   return (
     <section className="about-content">
@@ -91,14 +90,13 @@ function PostPage() {
 
           <p style={{ whiteSpace: 'pre-wrap', width: '100%' }}>{post.body}</p>
 
-          <div style={{ marginTop: '30px', display: 'flex', gap: '15px' }}>
-            {canEdit && (
+          {/* Edit and Delete buttons now show for both author and admin again */}
+          {isOwnerOrAdmin && (
+            <div style={{ marginTop: '30px', display: 'flex', gap: '15px' }}>
               <Link to={`/edit-post/${post._id}`} className="btn">Edit Post</Link>
-            )}
-            {canDelete && (
               <button onClick={handleDelete} className="btn" style={{ background: '#ff4d4d' }}>Delete Post</button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <hr style={{ margin: '40px 0', border: '1px solid #eee' }} />
