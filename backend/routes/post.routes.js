@@ -25,7 +25,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
   try {
     const { title, body } = req.body;
-    const image = req.file.path;
+    const image = req.file ? req.file.path : null;
     const post = await Post.create({ title, body, image, author: req.user._id });
     await post.populate('author', 'name profilePic');
     res.status(201).json(post);
